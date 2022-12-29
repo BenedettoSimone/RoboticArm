@@ -3,6 +3,8 @@
 
 <robot name="seven_dof_arm" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <xacro:include filename="$(find project_robot_description)/urdf/seven_dof_arm.gazebo"/>
+
 
   <!-- Include materials -->
 
@@ -546,7 +548,7 @@ This link is the base of the arm in which arm is placed
       <origin xyz="0.08 0 0" rpy="0 0 0"/>
     </joint>
 
-    <link name="camera">
+    <link name="camera_link">
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
@@ -574,7 +576,7 @@ This link is the base of the arm in which arm is placed
       <axis xyz="0 1 0" />
       <origin xyz=".2 0 0" rpy="0 0 0"/>
       <parent link="wrist_pitch_link"/>
-      <child link="camera"/>
+      <child link="camera_link"/>
     </joint>
       
    
