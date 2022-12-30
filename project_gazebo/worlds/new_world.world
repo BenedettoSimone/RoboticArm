@@ -157,7 +157,7 @@
       </model>
       <model name='unit_box'>
         <pose>0.364605 0.149637 0.029025 -1.6e-05 -0 6.8e-05</pose>
-        <scale>0.216658 0.108791 0.058048</scale>
+        <scale>0.144932 0.041613 0.058048</scale>
         <link name='link'>
           <pose>0.364605 0.149637 0.029025 -1.6e-05 -0 6.8e-05</pose>
           <velocity>0 0 0 0 -0 0</velocity>
