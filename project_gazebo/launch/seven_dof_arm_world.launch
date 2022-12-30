@@ -10,7 +10,6 @@
   <arg name="debug" default="false"/>
 
   <!-- We resume the logic in empty_world.launch -->
-  <!--<include file="$(find project_gazebo)/launch/prova.launch">-->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(arg world)" />
     <arg name="debug" value="$(arg debug)" />
