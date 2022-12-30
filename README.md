@@ -69,7 +69,7 @@ To do that you need to modify the file ``project_robot_description/urdf/seven_do
     <joint name="camera_joint" type="fixed">
       <axis xyz="0 1 0" />
       <origin xyz=".2 0 0" rpy="0 0 0"/>
-      <parent link="wrist_pitch_link"/>
+      <parent link="base_link"/>
       <child link="camera_link"/>
     </joint>
 
@@ -126,12 +126,78 @@ And finally you need to include the file in the URDF model.
 ```XML
 <xacro:include filename="$(find project_robot_description)/urdf/seven_dof_arm.gazebo"/>
 ```
+
+To check if the camera has been added, you need to create the package to simulate the robotic arm.
+```
+catkin_create_pkg project_gazebo gazebo_msgs gazebo_plugins gazebo_ros gazebo_ros_control project_robot_description
+```
+
+And then you need to create the launch file ``project_gazebo/launch/seven_dof_arm_world.launch`` inserting the following code. With this file you can show the robotic arm in an empty world.
+
+
+```XML
+<?xml version="1.0" ?>
+
+<launch>
+  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+
+  <!-- We resume the logic in empty_world.launch -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="headless" value="$(arg headless)"/>
+  </include>
+
+  <!-- Load the URDF into the ROS Parameter Server -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find project_robot_description)/urdf/seven_dof_arm.xacro'" />
+
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+	args="-urdf -model seven_dof_arm -param robot_description"/> 
+
+</launch>
+```
+
+After, execute in the terminal the following commands to see the robot model in the empty world, to check if the topic to receive the images from camera has been created and finally to receive the stream of the camera.
+
 ```
 roslaunch project_gazebo seven_dof_arm_world.launch
+```
+```
 rostopic list
+```
+```
 rosrun image_view image_view image:=/seven_dof_arm/camera/image_raw
-
 ```
 
 
+## 2. Create the custom world for the robot
+To create the world easily, respecting the proportions, it is best to start from an empty world with the robot inside. 
 
+Run Gazebo with this command.
+```
+roslaunch project_gazebo seven_dof_arm_world.launch
+```
+
+And then insert all the objects that you want. Before saving the world you need to delete from the scene the robot model, and finally you can save the world as ``new_world.world`` in the folder ``project_gazebo/worlds``.
+
+After you need to change the file ``project_gazebo/launch/seven_dof_arm_world.launch`` to show in Gazebo the new world.
+```XML
+<arg name="world" default="$(find project_gazebo)/worlds/new_world.world"/>
+```
+
+```XML
+<arg name="world_name" value="$(arg world)" />
+```
+
+Execute again this command to check if everything works.
+```
+roslaunch project_gazebo seven_dof_arm_world.launch
+```
