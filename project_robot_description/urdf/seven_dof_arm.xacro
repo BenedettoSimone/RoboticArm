@@ -171,7 +171,7 @@ This link is the base of the arm in which arm is placed
 		
       </geometry>
       </collision>>
-	<xacro:inertial_matrix mass="1"/>
+	<xacro:inertial_matrix mass="1000"/>
 
   </link>
 
@@ -476,6 +476,13 @@ This link is the base of the arm in which arm is placed
       </geometry>
       <material name="White" />
     </visual>
+
+    <collision>
+      <origin xyz="0.04 -0.03 0"/>
+      <geometry>
+        <box size="${left_gripper_len} ${left_gripper_width} ${left_gripper_height}" />
+      </geometry>
+    </collision>
 	<xacro:inertial_matrix mass="1"/>
   </link>
 
@@ -510,6 +517,12 @@ This link is the base of the arm in which arm is placed
       </geometry>
       <material name="White" />
     </visual>
+    <collision>
+      <origin xyz="0.04 0.03 0"/>
+      <geometry>
+        <box size="${right_gripper_len} ${right_gripper_width} ${right_gripper_height}" />
+      </geometry>
+    </collision>
 	<xacro:inertial_matrix mass="1"/>
   </link>
 
@@ -561,7 +574,7 @@ This link is the base of the arm in which arm is placed
         <geometry>
           <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
         </geometry>
-        <material name="green"/>
+        <material name="Black"/>
       </visual>
 
       <inertial>
@@ -574,14 +587,14 @@ This link is the base of the arm in which arm is placed
 
     <joint name="camera_joint" type="fixed">
       <axis xyz="0 1 0" />
-      <origin xyz=".1 0 0" rpy="0 0 0"/>
+      <origin xyz=".04 0 0" rpy="0 0 0"/>
       <parent link="base_link"/>
       <child link="camera_link"/>
     </joint>
       
    
 		
-  <xacro:include filename="$(find mastering_ros_robot_description_pkg)/urdf/sensors/xtion_pro_live.urdf.xacro"/>
+  <xacro:include filename="$(find project_robot_description)/urdf/sensors/xtion_pro_live.urdf.xacro"/>
 
 
 
@@ -605,7 +618,21 @@ This link is the base of the arm in which arm is placed
     </plugin>
   </gazebo>
 
-
-
-
+  <gazebo>
+  <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
+    <arm>
+      <arm_name>seven_dof_arm</arm_name>
+      <palm_link>gripper_roll_link</palm_link>
+      <gripper_link>gripper_finger_link1</gripper_link>
+      <gripper_link>gripper_finger_link2</gripper_link>
+    </arm>
+    <forces_angle_tolerance>100</forces_angle_tolerance>
+    <update_rate>4</update_rate>
+    <grip_count_threshold>4</grip_count_threshold>
+    <max_grip_count>8</max_grip_count>
+    <release_tolerance>0.005</release_tolerance>
+    <disable_collisions_on_attach>false</disable_collisions_on_attach>
+    <contact_topic>__default_topic__</contact_topic>
+  </plugin>
+  </gazebo>
 </robot>

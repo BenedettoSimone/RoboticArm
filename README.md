@@ -55,7 +55,7 @@ To do that you need to modify the file ``project_robot_description/urdf/seven_do
         <geometry>
           <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
         </geometry>
-        <material name="green"/>
+        <material name="Black"/>
       </visual>
 
       <inertial>
@@ -68,7 +68,7 @@ To do that you need to modify the file ``project_robot_description/urdf/seven_do
 
     <joint name="camera_joint" type="fixed">
       <axis xyz="0 1 0" />
-      <origin xyz=".2 0 0" rpy="0 0 0"/>
+      <origin xyz=".04 0 0" rpy="0 0 0"/>
       <parent link="base_link"/>
       <child link="camera_link"/>
     </joint>
@@ -87,7 +87,7 @@ After, create the file ``seven_dof_arm.gazebo`` in the folder ``project_robot_de
 <?xml version="1.0"?>
 <robot>
  <gazebo reference="camera_link">
-    <material>Gazebo/Green</material>
+    <material>Gazebo/Black</material>
     <sensor type="camera" name="camera">
       <update_rate>30.0</update_rate>
       <visualize></visualize>
@@ -176,6 +176,90 @@ rostopic list
 ```
 rosrun image_view image_view image:=/seven_dof_arm/camera/image_raw
 ```
+
+### 1.3 Fix gripper
+Since the gripper in this model does not work because it passes through objects, we made the gripper fingers solid and then inserted a plugin for Gazebo to attach and detach objects (This is because the physics engine is not optimized for grasping yet.).
+
+To make the gripper fingers solid we inserted collisions using the following code.
+```XML
+ <link name="gripper_finger_link1">
+     <visual>
+      <origin xyz="0.04 -0.03 0"/>
+      <geometry>
+           <box size="${left_gripper_len} ${left_gripper_width} ${left_gripper_height}" />
+      </geometry>
+      <material name="White" />
+    </visual>
+    <collision>
+      <origin xyz="0.04 -0.03 0"/>
+      <geometry>
+        <box size="${left_gripper_len} ${left_gripper_width} ${left_gripper_height}" />
+      </geometry>
+    </collision>
+	<xacro:inertial_matrix mass="1"/>
+  </link>
+
+```
+
+```XML
+  <link name="gripper_finger_link2">
+    <visual>
+      <origin xyz="0.04 0.03 0"/>
+      <geometry>
+      	<box size="${right_gripper_len} ${right_gripper_width} ${right_gripper_height}" />
+      </geometry>
+      <material name="White" />
+    </visual>
+    <collision>
+      <origin xyz="0.04 0.03 0"/>
+      <geometry>
+        <box size="${right_gripper_len} ${right_gripper_width} ${right_gripper_height}" />
+      </geometry>
+    </collision>
+	<xacro:inertial_matrix mass="1"/>
+  </link>
+```
+
+As a plugin to use the gripper in the gazebo we used [gazebo_grasp_plugin](https://github.com/JenniferBuehler/gazebo-pkgs) . To use it you need the following commands.
+```
+sudo apt-get install ros-noetic-gazebo-ros ros-noetic-eigen-conversions ros-noetic-object-recognition-msgs ros-noetic-roslint
+```
+```
+cd <your-catkin-ws>/src
+git clone https://github.com/JenniferBuehler/general-message-pkgs.git
+git clone https://github.com/JenniferBuehler/gazebo-pkgs.git
+```
+
+Finally build your workspace.
+```
+cd ..
+catkin_make
+```
+
+To use the plugin we inserted the following code in the file ``project_robot_description/urdf/seven_dof_arm.xacro``. You can see how it works on the [Wiki](https://github.com/JenniferBuehler/gazebo-pkgs/wiki/The-Gazebo-grasp-fix-plugin).
+```XML
+ <gazebo>
+  <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
+    <arm>
+      <arm_name>seven_dof_arm</arm_name>
+      <palm_link>gripper_roll_link</palm_link>
+      <gripper_link>gripper_finger_link1</gripper_link>
+      <gripper_link>gripper_finger_link2</gripper_link>
+    </arm>
+    <forces_angle_tolerance>100</forces_angle_tolerance>
+    <update_rate>4</update_rate>
+    <grip_count_threshold>4</grip_count_threshold>
+    <max_grip_count>8</max_grip_count>
+    <release_tolerance>0.005</release_tolerance>
+    <disable_collisions_on_attach>false</disable_collisions_on_attach>
+    <contact_topic>__default_topic__</contact_topic>
+  </plugin>
+  </gazebo>
+```
+We will check if the plugin was correctly installed later, after the configuration of MoveIt.
+
+
+
 
 
 ## 2. Create the custom world for the robot

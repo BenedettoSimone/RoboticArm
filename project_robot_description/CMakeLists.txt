@@ -10,7 +10,7 @@ project(project_robot_description)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rviz
-  tfgeometry_msgs
+  tf2_geometry_msgs
   urdf
   xacro
 )
@@ -107,7 +107,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES project_robot_description
-#  CATKIN_DEPENDS roscpp rviz tfgeometry_msgs urdf xacro
+#  CATKIN_DEPENDS roscpp rviz tf2_geometry_msgs urdf xacro
 #  DEPENDS system_lib
 )
 

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot>
  <gazebo reference="camera_link">
-    <material>Gazebo/Green</material>
+    <material>Gazebo/Black</material>
     <sensor type="camera" name="camera">
       <update_rate>30.0</update_rate>
       <visualize></visualize>
