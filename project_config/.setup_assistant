@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: project_robot_description
+    relative_path: urdf/seven_dof_arm.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/seven_dof_arm.srdf
+  CONFIG:
+    author_name: Benedetto Simone
+    author_email: sim.benede@gmail.com
+    generated_timestamp: 1672936500

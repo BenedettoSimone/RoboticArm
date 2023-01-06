@@ -261,8 +261,214 @@ We will check if the plugin was correctly installed later, after the configurati
 
 
 
+## 2. Generating a MoveIt! configuration package using the Setup Assistant tool
 
-## 2. Create the custom world for the robot
+First, install MoveIt.
+```bash
+sudo apt-get install ros-noetic-moveit ros-noetic-moveit-plugins ros-noetic-moveit-planners
+```
+
+### Step 1 - Launching the Setup Assistant tool
+
+```bash
+roslaunch moveit_setup_assistant setup_assistant.launch
+```
+
+Click <b>Create New MoveIt! Configuration Package</b>, next <b>Browse</b> and upload the file ``project_robot_description/urdf/seven_dof_arm.xacro``. Finally click <b>Load Files</b>.
+
+
+<p align="center"><img src="./readme_images/sa_loadFile.png"/></p>
+
+### Step 2 - Generating a self-collision matrix
+<p align="center"><img src="./readme_images/sa_collision.png"/></p>
+
+### Step 3 - Adding planning groups
+We created to groups, the ``arm`` group and the ``gripper`` group.
+For the arm group we need to set the kinematic solver as ``kdl_kinematics_plugin/KDLKinematicsPlugin`` and as a Group Default Planner the ``RRT`` algorithm. We need to set also the kinematic chain from <i>base_link</i> to <i>grasping_frame</i>.
+For the ``gripper`` group we need to add the two finger joints.
+<p align="center"><img src="./readme_images/sa_planningGroup.png"/></p>
+
+### Step 5 - Adding the robot poses
+We create two robot poses for the gripper, ``close`` and ``open``.
+<p align="center"><img src="./readme_images/sa_pose_close.png"/></p>
+<p align="center"><img src="./readme_images/sa_pose_open.png"/></p>
+
+### Step 6 – Setting up the robot end effector
+<p align="center"><img src="./readme_images/sa_roboteef.png"/></p>
+
+### Step 7 – Author information and Configuration files
+As last step, insert the author information in the appropriate section and save the configuration package as following.
+
+
+```bash
+cd catkin_ws/src
+mkdir project_config
+```
+Click <b>Browse</b>, select the folder created above, and click <b>Generate Package</b>. Click <b>Exit Setup Assistant</b>.
+
+
+## 3. Interfacing the MoveIt! configuration package to Gazebo
+For interfacing the arm in MoveIt! to Gazebo, we need a trajectory controller that has the FollowJointTrajectoryAction interface.
+
+### Step 1 – Writing the controller configuration file for MoveIt!
+The first step is to create a configuration file for talking with the trajectory controller in Gazebo from MoveIt!.
+
+Go into ``project_config/config`` and modify or create the file ``ros_controllers.yaml`` using this code:
+```YAML
+controller_list:
+  - name: /seven_dof_arm/arm_controller
+    action_ns: follow_joint_trajectory
+    default: True
+    type: FollowJointTrajectory
+    joints:
+      - shoulder_pan_joint
+      - shoulder_pitch_joint
+      - elbow_roll_joint
+      - elbow_pitch_joint
+      - wrist_roll_joint
+      - wrist_pitch_joint
+      - gripper_roll_joint
+
+  - name: /seven_dof_arm/gripper_controller
+    action_ns: follow_joint_trajectory
+    default: True
+    type: FollowJointTrajectory
+    joints:
+      - finger_joint1
+      - finger_joint2
+```
+The controller configuration file contains the definition of the two controller interfaces; one is for the arm and the other is for the gripper.
+
+
+### Step 2 – Creating controller launch files
+Next, we have to create a new launch file called ``seven_dof_arm_moveit_controller_manager.launch`` inside ``project_config/launch`` that can start the trajectory controllers. The name of the file starts with the robot's name, which is added with ``_moveit_controller_manager``.
+
+```XML
+<launch>
+<!-- loads moveit_controller_manager on the parameter server which is taken as argument if no argument is passed, moveit_simple_controller_manager will be set -->
+<arg name="moveit_controller_manager" default="moveit_simple_controller_manager/MoveItSimpleControllerManager" />
+<param name="moveit_controller_manager" value="$(arg moveit_controller_manager)"/>
+<!-- loads ros_controllers to the param server -->
+<rosparam file="$(find project_config)/config/ros_controllers.yaml"/>
+</launch>
+
+```
+
+This launch file starts the ``MoveItSimpleControllerManager`` program and loads the joint-trajectory controllers defined inside ``ros_controllers.yaml``.
+
+
+### Step 3 – Creating a controller configuration file for Gazebo
+After creating MoveIt! configuration files, we have to create a Gazebo controller configuration file and a launch file.
+
+Create the file ``project_gazebo/config/trajectory_control.yaml`` and insert the following code.
+
+```YAML
+seven_dof_arm: 
+  arm_controller:
+    type: position_controllers/JointTrajectoryController
+    joints:
+      - shoulder_pan_joint
+      - shoulder_pitch_joint
+      - elbow_roll_joint
+      - elbow_pitch_joint
+      - wrist_roll_joint
+      - wrist_pitch_joint
+      - gripper_roll_joint
+    constraints:
+        goal_time: 0.6
+        stopped_velocity_tolerance: 0.05
+        shoulder_pan_joint: {trajectory: 0.1, goal: 0.1}
+        shoulder_pitch_joint: {trajectory: 0.1, goal: 0.1}
+        elbow_roll_joint: {trajectory: 0.1, goal: 0.1}
+        elbow_pitch_joint: {trajectory: 0.1, goal: 0.1}
+        wrist_roll_joint: {trajectory: 0.1, goal: 0.1}
+        wrist_pitch_joint: {trajectory: 0.1, goal: 0.1}
+        gripper_roll_joint: {trajectory: 0.1, goal: 0.1}      
+    stop_trajectory_duration: 0.5
+    state_publish_rate:  25
+    action_monitor_rate: 10
+    
+  gripper_controller:
+    type: position_controllers/JointTrajectoryController
+    joints:
+      - finger_joint1
+      - finger_joint2   
+    stop_trajectory_duration: 0.5
+    state_publish_rate:  25
+    action_monitor_rate: 10
+
+```
+
+
+### Step 4 – Creating a launch file for Gazebo trajectory controllers
+After creating a configuration file, we can load the controllers along with Gazebo. We have to create a launch file that launches Gazebo, the trajectory controllers, and the MoveIt! interface in a single command.
+
+Inside the file ``project_gazebo/launch/seven_dof_arm_bringup_moveit.launch`` insert the following code.
+```XML
+<?xml version="1.0" ?>
+
+<launch> 
+  <!-- Launch Gazebo  --> 
+  <include file="$(find project_gazebo)/launch/seven_dof_arm_world.launch" />    
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find project_gazebo)/config/trajectory_control.yaml" command="load"/>
+  <rosparam file="$(find project_gazebo)/config/seven_dof_arm_gazebo_joint_states.yaml" command="load"/>
+
+
+ 	<node name="seven_dof_arm_joint_state_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/seven_dof_arm" args="joint_state_controller arm_controller gripper_controller"/>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+    <remap from="/joint_states" to="/seven_dof_arm/joint_states" />
+  </node>
+  
+ 
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> 
+	
+	<remap from="joint_states" to="/seven_dof_arm/joint_states" />
+  
+  <include file="$(find project_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="false" />
+  </include>
+
+  <include file="$(find project_config)/launch/move_group.launch">
+    <arg name="publish_monitored_planning_scene" value="true" />
+
+  </include>
+
+  
+  <!--
+  <include file="$(find project_config)/launch/moveit_rviz.launch">
+    <arg name="rviz_config" value="$(find project_config)/launch/moveit.rviz"/>
+  </include> -->
+```
+
+
+This launch file spawns the robot model in Gazebo, publishes the joint states, attaches the position controller, attaches the trajectory controller, and, finally, launches ``moveit_planning_execution.launch`` inside the MoveIt! package for starting the MoveIt! nodes along with RViz.
+
+Before launch the planning scene we need to install the following packages:
+```
+sudo apt-get install ros-noetic-joint-state-controller ros-noetic-position-controllers ros-noetic-joint-trajectory-controller
+```
+
+```
+sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-msgs ros-noetic-gazebo-plugins ros-noetic-gazebo-ros-control
+```
+
+To check if everything works execute the following command.
+```
+roslaunch project_gazebo seven_dof_arm_bringup_moveit.launch
+```
+
+Check in the Terminal (next picture) if the MoveItSimpleControllerManager is able to connect with the Gazebo controllers.
+
+<p align="center"><img src="./readme_images/debug_1.png"/></p>
+
+Check also if the gazebo_grasp_plugin has been loaded correctly.
+<p align="center"><img src="./readme_images/debug_2.png"/></p>
+
+
+## 4. Create the custom world for the robot
 To create the world easily, respecting the proportions, it is best to start from an empty world with the robot inside. 
 
 Run Gazebo with this command.

@@ -15,5 +15,5 @@ controller_list:
       - finger_joint1
       - finger_joint2
 initial:  # Define initial robot poses per group
-  - group: arm
-    pose: default
+  - group: gripper
+    pose: close
