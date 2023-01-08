@@ -19,8 +19,8 @@
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <cylinder>
-            <radius>0.0448264</radius>
-            <length>0.183758</length>
+            <radius>0.018402</radius>
+            <length>0.074444</length>
           </cylinder>
         </geometry>
         <material>
@@ -41,8 +41,8 @@
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <cylinder>
-            <radius>0.044826</radius>
-            <length>0.183758</length>
+            <radius>0.018402</radius>
+            <length>0.074444</length>
           </cylinder>
         </geometry>
         <surface>

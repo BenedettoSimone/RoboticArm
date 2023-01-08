@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
-  <model name='sprite'>
+  <model name='coke'>
     <link name='link_0'>
       <inertial>
         <mass>0.00147636</mass>
@@ -19,14 +19,14 @@
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <cylinder>
-            <radius>0.0448264</radius>
-            <length>0.183758</length>
+            <radius>0.018402</radius>
+            <length>0.074444</length>
           </cylinder>
         </geometry>
         <material>
           <lighting>1</lighting>
           <script>
-            <uri>model://coke/materials/scripts</uri>
+             <uri>model://coke/materials/scripts</uri>
              <uri>model://coke/materials/textures</uri>
             <name>coke</name>
           </script>
@@ -41,8 +41,8 @@
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <cylinder>
-            <radius>0.044826</radius>
-            <length>0.183758</length>
+            <radius>0.018402</radius>
+            <length>0.074444</length>
           </cylinder>
         </geometry>
         <surface>

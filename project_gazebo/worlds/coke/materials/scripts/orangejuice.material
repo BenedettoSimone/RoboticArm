@@ -6,7 +6,7 @@ material coke
     {
       texture_unit
       {
-        texture sprite.jpg
+        texture coke.jpg
  	scale 1 1 1
       }
     }
