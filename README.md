@@ -6,6 +6,7 @@ To replicate our work you need to follow the next sections. To use it directly g
 ## Technical requirements
 - Ubuntu 20.04
 - ROS Noetic
+- Python 3.8
 
 ## 1. Robot description
 ### 1.1 Create the ROS package for the robot description
@@ -447,16 +448,16 @@ Inside the file ``project_gazebo/launch/seven_dof_arm_bringup_moveit.launch`` in
 This launch file spawns the robot model in Gazebo, publishes the joint states, attaches the position controller, attaches the trajectory controller, and, finally, launches ``moveit_planning_execution.launch`` inside the MoveIt! package for starting the MoveIt! nodes along with RViz.
 
 Before launch the planning scene we need to install the following packages:
-```
+```bash
 sudo apt-get install ros-noetic-joint-state-controller ros-noetic-position-controllers ros-noetic-joint-trajectory-controller
 ```
 
-```
+```bash
 sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-msgs ros-noetic-gazebo-plugins ros-noetic-gazebo-ros-control
 ```
 
 To check if everything works execute the following command.
-```
+```bash
 roslaunch project_gazebo seven_dof_arm_bringup_moveit.launch
 ```
 
@@ -467,8 +468,38 @@ Check in the Terminal (next picture) if the MoveItSimpleControllerManager is abl
 Check also if the gazebo_grasp_plugin has been loaded correctly.
 <p align="center"><img src="./readme_images/debug_2.png"/></p>
 
+## 4. Recognize objects using a CNN model
+To recognize the type of drink, we trained a CNN. The dataset and the model are available in the folder ``CNN-can``.
 
-## 4. Create the custom world for the robot
+After training the network and saving the model with the respective weights, a new package must be created that will contain several scripts.
+```bash
+cd catkin_ws/src
+catkin_create_pkg object_recognition roscpp rospy std_msgs
+```
+
+You need also to install the following python packages.
+```bash
+pip install opencv-python
+pip install numpy
+pip install tensorflow
+pip install keras
+```
+
+We then created the file ``scripts/get_images.py``, which subscribes to the topic ``/seven_dof_arm/camera/image_raw/`` and receives the images from the camera classifying the object within them.
+
+To check if everything works execute the following command.
+```bash
+roslaunch project_gazebo seven_dof_arm_bringup_moveit.launch
+```
+You need to copy the three models available ``project_gazebo/worlds``, namely ``coke``,``pepsi``,``sprite`` in your ``.gazebo/models`` folder.
+
+After, insert one model in the scene behind the camera.
+Finally, execute the following command in a new terminal.
+```bash
+python catkin_ws/src/object_recognition/scripts/get_images.py
+```
+
+## 5. Create the custom world for the robot
 To create the world easily, respecting the proportions, it is best to start from an empty world with the robot inside. 
 
 Run Gazebo with this command.

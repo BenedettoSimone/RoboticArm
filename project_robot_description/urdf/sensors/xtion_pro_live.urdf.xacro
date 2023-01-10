@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:include filename="$(find mastering_ros_robot_description_pkg)/urdf/sensors/xtion_pro_live.gazebo.xacro"/>
+  <xacro:include filename="$(find project_robot_description)/urdf/sensors/xtion_pro_live.gazebo.xacro"/>
 
   <xacro:macro name="dummy_inertial">
     <inertial>
@@ -42,7 +42,7 @@
       
       <collision>
       <geometry>
-          <mesh filename="package://mastering_ros_robot_description_pkg/meshes/sensors/xtion_pro_live/xtion_pro_live.dae"/>
+          <mesh filename="package://project_robot_description/meshes/sensors/xtion_pro_live/xtion_pro_live.dae"/>
       </geometry>
       </collision>
     </link>
