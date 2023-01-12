@@ -502,7 +502,7 @@ pip install tensorflow
 pip install keras
 ```
 
-We then created the file ``scripts/get_images.py``, which subscribes to the topic ``/seven_dof_arm/camera/image_raw/`` and receives the images from the camera classifying the object within them.
+We then created the file ``scripts/get_images.py``, which subscribes to the topic ``/seven_dof_arm/camera/image_raw/`` and receives the images from the camera classifying the object within them. A message containing the class to which the object belongs on the topic ``object_classification`` will also be sent. This message will be useful for telling the robot the final destination of the object.
 
 To check if everything works execute the following command.
 ```bash
