@@ -239,8 +239,8 @@ catkin_make
 
 To use the plugin we inserted the following code in the file ``project_robot_description/urdf/seven_dof_arm.xacro``. You can see how it works on the [Wiki](https://github.com/JenniferBuehler/gazebo-pkgs/wiki/The-Gazebo-grasp-fix-plugin).
 ```XML
- <gazebo>
-  <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
+<gazebo>
+    <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
     <arm>
       <arm_name>seven_dof_arm</arm_name>
       <palm_link>gripper_roll_link</palm_link>
@@ -254,12 +254,29 @@ To use the plugin we inserted the following code in the file ``project_robot_des
     <release_tolerance>0.005</release_tolerance>
     <disable_collisions_on_attach>false</disable_collisions_on_attach>
     <contact_topic>__default_topic__</contact_topic>
-  </plugin>
-  </gazebo>
+    </plugin>
+</gazebo>
 ```
 We will check if the plugin was correctly installed later, after the configuration of MoveIt.
 
+### 1.4 Attach the robot to the world
+Since the robot moves (very slightly) on the ground plane, we modified the ``seven_dof_arm.xacro`` file by first deleting the ``bottom_link``, inserting a new ``world`` link and connected the two links using the ``bottom_joint``. The procedure was performed using the following code.
+```XML
+<link name="world" />
+```
 
+```XML
+<joint name="bottom_joint" type="fixed"> 
+    <parent link="world"/>
+    <child link="base_link"/>
+</joint>
+```
+You must also edit the file ``project_gazebo/launch/seven_dof_arm_world.launch`` to spawn the robot in a specific position, for example (0,0,0.5), using the following code. Using the z-coordinate as 0, the robot will collide with the ground plane.
+```XML
+<!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" 
+      args="-urdf -model seven_dof_arm -param robot_description -x 0 -y 0 -z 0.5"/> 
+```
 
 
 ## 2. Generating a MoveIt! configuration package using the Setup Assistant tool

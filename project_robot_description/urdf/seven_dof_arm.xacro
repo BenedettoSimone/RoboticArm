@@ -112,40 +112,11 @@
 <!-- BOTTOM FIXED LINK 
 This link is the base of the arm in which arm is placed 
 
--->
+--> <link name="world" />
 
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
-  <joint name="bottom_joint" type="fixed">
-    <origin xyz="0 0 0" rpy="0 0 0" />
-    <parent link="base_link"/>
-    <child link="bottom_link"/>
-  </joint>
-
-  <link name="bottom_link">
-
-    <visual>
-      <origin xyz=" 0 0 -0.04"  rpy="0 0 0"/>
-      <geometry>
-
-	       <box size="1 1 0.02" />
-
-      </geometry>
-      <material name="Brown" />
-    </visual>
-
-    <collision>
-      <origin xyz=" 0 0 -0.04"  rpy="0 0 0"/>
-      <geometry>
-	       <box size="1 1 0.02" />
-      </geometry>
-      </collision>>
-
-  </link>
-
-  <gazebo reference="bottom_link">
-    <material>Gazebo/White</material>
-  </gazebo>
+ 
 
 
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -154,7 +125,7 @@ This link is the base of the arm in which arm is placed
   <link name="base_link">
 
     <visual>
-      <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" /> <!-- rotate PI/2 -->
+      <origin xyz="0 0 0" rpy="0 0 0" /> <!-- rotate PI/2 -->
       <geometry>
 
 	       <box size="0.1 0.1 0.1" />
@@ -164,20 +135,30 @@ This link is the base of the arm in which arm is placed
     </visual>
 
     <collision>
-      <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" /> <!-- rotate PI/2 -->
+      <origin xyz="0 0 0" rpy="0 0 0" /> <!-- rotate PI/2 -->
       <geometry>
 
 	       <box size="0.1 0.1 0.1" />
 		
       </geometry>
-      </collision>>
-	<xacro:inertial_matrix mass="1000"/>
+      </collision>    
+        <inertial>
+            <mass value="0.1" />
+            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
+        </inertial>
 
   </link>
 
   <gazebo reference="base_link">
     <material>Gazebo/White</material>
+    <turnGravityOff>false</turnGravityOff>
   </gazebo>
+  
+  
+   <joint name="bottom_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+  </joint>
 
   <joint name="shoulder_pan_joint" type="revolute">
     <parent link="base_link"/>

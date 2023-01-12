@@ -153,7 +153,7 @@
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
-        </link>
+        </link>r
       </model>
       <model name='unit_box'>
         <pose>0.364605 0.149637 0.029025 -1.6e-05 -0 6.8e-05</pose>
