@@ -485,7 +485,33 @@ Check in the Terminal (next picture) if the MoveItSimpleControllerManager is abl
 Check also if the gazebo_grasp_plugin has been loaded correctly.
 <p align="center"><img src="./readme_images/debug_2.png"/></p>
 
-## 4. Recognize objects using a CNN model
+## 4. Create the custom world for the robot
+To create the world easily, respecting the proportions, it is best to start from an empty world with the robot inside. 
+
+Run Gazebo with this command.
+```
+roslaunch project_gazebo seven_dof_arm_world.launch
+```
+
+And then insert all the objects that you want. We used the models in the ``project_gazebo/worlds`` folder to build our world. To use them, it was necessary to place them in the hidden folder ``.gazebo/models``. Before saving the world you need to delete from the scene the robot model, and finally you can save the world as ``new_world.world`` in the folder ``project_gazebo/worlds``.
+
+After you need to change the file ``project_gazebo/launch/seven_dof_arm_world.launch`` to show in Gazebo the new world.
+```XML
+<arg name="world" default="$(find project_gazebo)/worlds/new_world.world"/>
+```
+
+```XML
+<arg name="world_name" value="$(arg world)" />
+```
+
+Execute again this command to check if everything works.
+```
+roslaunch project_gazebo seven_dof_arm_world.launch
+```
+<p align="center"><img src="./readme_images/gazebo_world.png"/></p>
+
+
+## 5. Recognize objects using a CNN model
 To recognize the type of drink, we trained a CNN. The dataset and the model are available in the folder ``CNN-can``.
 
 After training the network and saving the model with the respective weights, a new package must be created that will contain several scripts.
@@ -516,26 +542,3 @@ Finally, execute the following command in a new terminal.
 python catkin_ws/src/object_recognition/scripts/get_images.py
 ```
 
-## 5. Create the custom world for the robot
-To create the world easily, respecting the proportions, it is best to start from an empty world with the robot inside. 
-
-Run Gazebo with this command.
-```
-roslaunch project_gazebo seven_dof_arm_world.launch
-```
-
-And then insert all the objects that you want. Before saving the world you need to delete from the scene the robot model, and finally you can save the world as ``new_world.world`` in the folder ``project_gazebo/worlds``.
-
-After you need to change the file ``project_gazebo/launch/seven_dof_arm_world.launch`` to show in Gazebo the new world.
-```XML
-<arg name="world" default="$(find project_gazebo)/worlds/new_world.world"/>
-```
-
-```XML
-<arg name="world_name" value="$(arg world)" />
-```
-
-Execute again this command to check if everything works.
-```
-roslaunch project_gazebo seven_dof_arm_world.launch
-```
