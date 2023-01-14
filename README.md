@@ -493,7 +493,9 @@ Run Gazebo with this command.
 roslaunch project_gazebo seven_dof_arm_world.launch
 ```
 
-And then insert all the objects that you want. We used the models in the ``project_gazebo/worlds`` folder to build our world. To use them, it was necessary to place them in the hidden folder ``.gazebo/models``. Before saving the world you need to delete from the scene the robot model, and finally you can save the world as ``new_world.world`` in the folder ``project_gazebo/worlds``.
+And then insert all the objects that you want. We used the models in the ``project_gazebo/worlds`` folder to build our world. To use them, it was necessary to place them in the hidden folder ``.gazebo/models``. 
+
+Before saving the world you need to delete from the scene the robot model, and finally you can save the world as ``new_world.world`` in the folder ``project_gazebo/worlds``.
 
 After you need to change the file ``project_gazebo/launch/seven_dof_arm_world.launch`` to show in Gazebo the new world.
 ```XML
@@ -542,3 +544,11 @@ Finally, execute the following command in a new terminal.
 python catkin_ws/src/object_recognition/scripts/get_images.py
 ```
 
+## 6. Move the robot
+
+To perform the robot's movements, we used the Move Group Python interface, which provides the functionality to set joint or pose targets, create movement plans and move the robot. 
+
+The script that takes care of using this interface is ``object_recognition/scripts/move_robot_moveit.py``, which takes care of moving the robot towards the can, grabbing the object, reading from the ``object_classification`` topic the type of can that is currently in front of the camera and based on that executes the movement of the arm to the target, and finally releasing the object into the dedicated box.
+
+## 7. Move the robot
+In order to simulate the movement of the cans on the conveyor belt, we used the script ``object_recognition/scripts/SpawnAndAnimate.py`` which, using the services ``/gazebo/spawn_sdf_model`` and ``/gazebo/set_model_state``, takes care of spawning the three types of cans and moving them on the conveyor belt.
