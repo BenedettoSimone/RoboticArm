@@ -8,6 +8,7 @@ import numpy as np
 import os
 from std_msgs.msg import String
 import time
+import keras.utils as image
 
 # Initialize ROS node 'object_recognition'
 rospy.init_node('object_recognition', anonymous=True)
@@ -45,23 +46,20 @@ def image_callback(img_msg):
     except CvBridgeError as e:
         rospy.logerr("CvBridge Error: {0}".format(e))
     
-    img = cv2.resize(cv_image, (224,224), interpolation = cv2.INTER_AREA)
     
-    # Make the image a numpy array and reshape it to the models input shape.
-    img = np.asarray(img, dtype=np.float32).reshape(1, 224, 224, 3)
-
-    # Normalize the image array
-    img = (img / 127.5) - 1
-
-    # run the inference
-    prediction = model.predict(img)
+    cv2.imwrite("test.jpg", cv_image)
+    img = image.load_img('test.jpg', target_size=(224,224))
+    
+    img = image.img_to_array(img)
+    img = np.expand_dims(img, axis=0)
+    images = np.vstack([img])
+    prediction = model.predict(images)
     index = np.argmax(prediction)
-
-    class_name = class_names[index]
     
+    class_name = class_names[index]
     print(prediction)
     print(class_name)
-    
+
     send_type(class_name)
     
     # Using cv2.putText(image, text, font, fontscale, color, thickness) method

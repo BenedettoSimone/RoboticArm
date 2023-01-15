@@ -1,7 +1,5 @@
 # RoboticArm
-
-
-To replicate our work you need to follow the next sections. To use it directly go INSERT LINK
+The aim of this project is to use a robotic arm to classify canned drinks and sort them into special boxes.
 
 ## Technical requirements
 - Ubuntu 20.04
@@ -298,7 +296,7 @@ Click <b>Create New MoveIt! Configuration Package</b>, next <b>Browse</b> and up
 <p align="center"><img src="./readme_images/sa_loadFile.png"/></p>
 
 ### Step 2 - Generating a self-collision matrix
-<p align="center"><img src="./readme_images/sa_collision.png"/></p>
+<p align="center"><img src="./readme_images/sa_collisions.png"/></p>
 
 ### Step 3 - Adding planning groups
 We created to groups, the ``arm`` group and the ``gripper`` group.
@@ -550,5 +548,20 @@ To perform the robot's movements, we used the Move Group Python interface, which
 
 The script that takes care of using this interface is ``object_recognition/scripts/move_robot_moveit.py``, which takes care of moving the robot towards the can, grabbing the object, reading from the ``object_classification`` topic the type of can that is currently in front of the camera and based on that executes the movement of the arm to the target, and finally releasing the object into the dedicated box.
 
-## 7. Move the robot
+## 7. Simulate the robot
 In order to simulate the movement of the cans on the conveyor belt, we used the script ``object_recognition/scripts/SpawnAndAnimate.py`` which, using the services ``/gazebo/spawn_sdf_model`` and ``/gazebo/set_model_state``, takes care of spawning the three types of cans and moving them on the conveyor belt.
+
+
+## Use it
+```bash
+roslaunch project_gazebo seven_dof_arm_bringup_moveit.launch
+```
+```bash
+python catkin_ws/src/object_recognition/scripts/SpawnAndAnimate.py
+```
+```bash
+python catkin_ws/src/object_recognition/scripts/get_images.py
+```
+```bash
+python catkin_ws/src/object_recognition/scripts/move_robot_moveit.py
+```

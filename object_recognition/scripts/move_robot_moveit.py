@@ -98,7 +98,7 @@ def set_named_goal(pose_name):
 # function to get classification 
 def callback(msg):
     rospy.loginfo(rospy.get_caller_id() + "I heard %s", msg.data)
-    global data 
+    global object_classification 
     object_classification = msg.data
     
     # Read only one message
@@ -112,43 +112,40 @@ set_named_goal("open")
 
 # Execute the grasping phase for three objects
 while True:
-    
+       
     # Reach the start pose
     move_joint(0,-0.0178,0,1.0444,0,1.4121,0)
     
+    time.sleep(2)
+    
+    # Subscription to topic to read the object classification
+    subscriber = rospy.Subscriber("object_classification", String, callback)
+     
     # Move the arm above the object
     move_joint(0,0.2731,0,1.6209,0,1.1138,0)
 
-    # Subscription to topic to read the object classification
-    subscriber = rospy.Subscriber("object_classification", String, callback)
-
     # Close the gripper
-    set_named_goal("close")
-    
-    print("========")
-    print(object_classification)
-    
+    set_named_goal("close")    
     
     # Check the type and set the goal pose
-
-    i = input("Write class: ")
     
-    if i=="coke":
+    if object_classification=="Coke":
         # Coke goal
         move_joint(0.7041,1.0746,-0.0614,0.1374,0.0748,1.1156,0)
     
-    elif i == "pepsi":
+    elif object_classification == "Pepsi":
         # Pepsi goal     
         move_joint(1.2759,0.3593,-0.0417,1.0560,0.0748,1.1156,0)
     
-    elif i == "sprite":
+    elif object_classification == "Sprite":
         # Sprite goal
         move_joint(1.9839,0.7445,0,0.6385,0.0748,1.1156,0)
   
     # Open the gripper
     set_named_goal("open")
     
-    i = input("Go next, press something: ")
+    object_classification = ""
+    
     
  
 
