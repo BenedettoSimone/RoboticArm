@@ -565,3 +565,8 @@ python catkin_ws/src/object_recognition/scripts/get_images.py
 ```bash
 python catkin_ws/src/object_recognition/scripts/move_robot_moveit.py
 ```
+
+
+https://user-images.githubusercontent.com/72497905/212550128-b0f12b1b-03bc-49f0-9208-641018fd2e66.mp4
+
+
