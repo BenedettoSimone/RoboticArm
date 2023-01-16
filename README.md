@@ -530,7 +530,11 @@ pip install keras
 
 We then created the file ``scripts/get_images.py``, which subscribes to the topic ``/seven_dof_arm/camera/image_raw/`` and receives the images from the camera classifying the object within them. A message containing the class to which the object belongs on the topic ``object_classification`` will also be sent. This message will be useful for telling the robot the final destination of the object.
 
-To check if everything works execute the following command.
+To check if everything works execute the following commands.
+```bash
+cd catkin_ws
+catkin_make
+```
 ```bash
 roslaunch project_gazebo seven_dof_arm_bringup_moveit.launch
 ```
@@ -539,7 +543,7 @@ You need to copy the three models available ``project_gazebo/worlds``, namely ``
 After, insert one model in the scene behind the camera.
 Finally, execute the following command in a new terminal.
 ```bash
-python catkin_ws/src/object_recognition/scripts/get_images.py
+rosrun object_recognition get_images.py
 ```
 
 ## 6. Move the robot
@@ -557,14 +561,15 @@ In order to simulate the movement of the cans on the conveyor belt, we used the 
 roslaunch project_gazebo seven_dof_arm_bringup_moveit.launch
 ```
 ```bash
-python catkin_ws/src/object_recognition/scripts/SpawnAndAnimate.py
+rosrun object_recognition SpawnAndAnimate.py
 ```
 ```bash
-python catkin_ws/src/object_recognition/scripts/get_images.py
+rosrun object_recognition get_images.py
 ```
 ```bash
-python catkin_ws/src/object_recognition/scripts/move_robot_moveit.py
+rosrun object_recognition move_robot_moveit.py
 ```
+
 
 
 https://user-images.githubusercontent.com/72497905/212550128-b0f12b1b-03bc-49f0-9208-641018fd2e66.mp4
