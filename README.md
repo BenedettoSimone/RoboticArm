@@ -572,6 +572,9 @@ rosrun object_recognition move_robot_moveit.py
 
 
 
-https://user-images.githubusercontent.com/72497905/212550128-b0f12b1b-03bc-49f0-9208-641018fd2e66.mp4
+
+https://user-images.githubusercontent.com/72497905/212648013-65139791-87f7-4047-9d5c-d5b403b69dbf.mp4
+
+
 
 
