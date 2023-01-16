@@ -552,7 +552,7 @@ To perform the robot's movements, we used the Move Group Python interface, which
 
 The script that takes care of using this interface is ``object_recognition/scripts/move_robot_moveit.py``, which takes care of moving the robot towards the can, grabbing the object, reading from the ``object_classification`` topic the type of can that is currently in front of the camera and based on that executes the movement of the arm to the target, and finally releasing the object into the dedicated box.
 
-## 7. Simulate the robot
+## 7. Simulate the scene
 In order to simulate the movement of the cans on the conveyor belt, we used the script ``object_recognition/scripts/SpawnAndAnimate.py`` which, using the services ``/gazebo/spawn_sdf_model`` and ``/gazebo/set_model_state``, takes care of spawning the three types of cans and moving them on the conveyor belt.
 
 
